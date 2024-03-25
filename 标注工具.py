@@ -184,10 +184,19 @@ class AnnotationApp:
             self.canvas.create_rectangle(x1, y1, x2, y2, outline="red", tags="annotation")
 
             # 转换并绘制关键点
+            transformed_keypoints = []
             for kp in keypoints:
                 kp_x = (kp[0] * self.photo_image.width() + self.offset_x)
                 kp_y = (kp[1] * self.photo_image.height() + self.offset_y)
                 self.canvas.create_oval(kp_x - 3, kp_y - 3, kp_x + 3, kp_y + 3, fill="blue", tags="annotation")
+                transformed_keypoints.append((kp_x, kp_y))
+
+            # 绘制关键点之间的连线
+            for edge in self.keypoint_edges:
+                if edge[0] - 1 < len(transformed_keypoints) and edge[1] - 1 < len(transformed_keypoints):
+                    kp1 = transformed_keypoints[edge[0] - 1]
+                    kp2 = transformed_keypoints[edge[1] - 1]
+                    self.canvas.create_line(kp1[0], kp1[1], kp2[0], kp2[1], fill="green", tags="annotation")
 
 
 
