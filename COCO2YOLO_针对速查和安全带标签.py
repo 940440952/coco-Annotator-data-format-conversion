@@ -32,7 +32,7 @@ def convert_coco_to_yolo(json_file_path, output_dir, missing_data_file):
                         md_file.write(f"{ann['id']}\n")
                         continue  # 跳过此条标注
 
-                    category_name = ann['metadata']['name']
+                    category_name = "0"
 
                     bbox = ann['bbox']
                     x_center = (bbox[0] + bbox[2] / 2) / image_width
@@ -54,8 +54,8 @@ def convert_coco_to_yolo(json_file_path, output_dir, missing_data_file):
 
 
 # 使用示例
-json_file_path = 'coco-1710900748.9160733.json'  # JSON 文件的路径
-output_directory = 'output_directory'  # 输出目录
+json_file_path = 'coco-1711334761.5748825.json'  # JSON 文件的路径
+output_directory = 'safetyBelt'  # 输出目录
 missing_data_file = 'missing_data.txt'  # 缺失数据文件
 
 convert_coco_to_yolo(json_file_path, output_directory, missing_data_file)

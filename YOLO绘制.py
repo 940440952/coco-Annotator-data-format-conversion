@@ -53,7 +53,7 @@ def show_image_and_yolo_annotations(image_dir, annotation_dir, image_id):
 
 # 输入参数
 image_dir = 'pic'  # 图片所在的文件夹路径
-annotation_dir = 'out'  # 标注所在的文件夹路径
-image_id = '1710825899209'  # 图片的编号，不包含文件扩展名
+annotation_dir = 'merged_dataset'  # 标注所在的文件夹路径
+image_id = '1079'  # 图片的编号，不包含文件扩展名
 
 show_image_and_yolo_annotations(image_dir, annotation_dir, image_id)
