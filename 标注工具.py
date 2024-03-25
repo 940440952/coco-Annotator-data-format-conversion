@@ -3,6 +3,7 @@ from tkinter import filedialog, Listbox, Scrollbar, messagebox
 from PIL import Image, ImageTk
 import os
 
+
 class AnnotationApp:
     def __init__(self, root):
         self.root = root
@@ -14,21 +15,27 @@ class AnnotationApp:
         self.canvas_width = 1000
         self.canvas_height = 600
 
-        root.geometry(f"{self.canvas_width}x{self.canvas_height}")
+        # 设置默认目录
+        self.default_image_dir = 'D:/WorkSapce/数据集转换/pic'
+        self.default_annotation_dir = 'D:/WorkSapce/数据集转换/merged_dataset'
+
+        self.image_dir = self.default_image_dir
+        self.annotation_dir = self.default_annotation_dir
 
         self.top_frame = tk.Frame(root)
         self.top_frame.pack(side=tk.TOP, fill=tk.X)
 
-        self.image_dir_label = tk.Label(self.top_frame, text="图片目录: 未选择")
+        self.image_dir_label = tk.Label(self.top_frame, text=f"图片目录: {self.image_dir}")
         self.image_dir_label.pack(side=tk.LEFT)
 
-        self.annotation_dir_label = tk.Label(self.top_frame, text="标注目录: 未选择")
+        self.annotation_dir_label = tk.Label(self.top_frame, text=f"标注目录: {self.annotation_dir}")
         self.annotation_dir_label.pack(side=tk.LEFT)
 
-        self.load_image_button = tk.Button(self.top_frame, text="图片目录", command=self.load_image_directory)
+        self.load_image_button = tk.Button(self.top_frame, text="更改图片目录", command=self.load_image_directory)
         self.load_image_button.pack(side=tk.LEFT)
 
-        self.load_annotation_button = tk.Button(self.top_frame, text="标注目录", command=self.load_annotation_directory)
+        self.load_annotation_button = tk.Button(self.top_frame, text="更改标注目录",
+                                                command=self.load_annotation_directory)
         self.load_annotation_button.pack(side=tk.LEFT)
 
         self.load_button = tk.Button(self.top_frame, text="加载", command=self.load_content)
@@ -49,12 +56,18 @@ class AnnotationApp:
 
         self.file_listbox.bind('<<ListboxSelect>>', self.on_file_select)
 
-        self.image_dir = None
-        self.annotation_dir = None
         self.image_list = []
         self.photo_image = None
         self.annotation_data = []
+        self.keypoint_edges = [
+            [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9],
+            [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [15, 16], [16, 17], [17, 18],
+            [19, 20], [19, 21], [20, 22], [21, 23], [22, 24], [23, 25], [24, 25], [24, 26],
+            [24, 30], [25, 27], [25, 31], [26, 28], [27, 29], [30, 31], [30, 32], [31, 33],
+            [32, 34], [33, 35]
+        ]
         self.canvas.bind('<Configure>', lambda e: self.update_image_canvas())
+        root.geometry(f"{self.canvas_width}x{self.canvas_height}")
 
     def load_image_directory(self):
         self.image_dir = filedialog.askdirectory(title="选择图片目录")
@@ -87,25 +100,26 @@ class AnnotationApp:
         image_path = os.path.join(self.image_dir, filename)
         self.current_image = Image.open(image_path)
 
-        # 计算缩放比例
-        original_width, original_height = self.current_image.size
-        scale_w = self.canvas_width / original_width
-        scale_h = self.canvas_height / original_height
+        # 计算等比例缩放后的图片大小
+        img_width, img_height = self.current_image.size
+        canvas_width = self.canvas.winfo_width() if self.canvas.winfo_width() > 0 else 800  # 使用默认值防止除以0
+        canvas_height = self.canvas.winfo_height() if self.canvas.winfo_height() > 0 else 600  # 使用默认值防止除以0
+        scale_w = canvas_width / img_width
+        scale_h = canvas_height / img_height
         self.scale = min(scale_w, scale_h)
+        new_width = int(img_width * self.scale)
+        new_height = int(img_height * self.scale)
 
-        # 根据缩放比例调整图像尺寸
-        new_width = int(original_width * self.scale)
-        new_height = int(original_height * self.scale)
-        self.photo_image = ImageTk.PhotoImage(
-            self.current_image.resize((new_width, new_height), Image.Resampling.LANCZOS))
+        # 调整图片大小
+        img_resized = self.current_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        self.photo_image = ImageTk.PhotoImage(img_resized)
 
-        # 计算偏移量以在画布上居中图像
-        self.offset_x = (self.canvas_width - new_width) // 2
-        self.offset_y = (self.canvas_height - new_height) // 2
+        # 计算图片居中时的偏移量
+        self.offset_x = (canvas_width - new_width) // 2
+        self.offset_y = (canvas_height - new_height) // 2
 
         self.canvas.create_image(self.offset_x, self.offset_y, image=self.photo_image, anchor='nw')
 
-        # 加载并绘制注释
         annotation_path = os.path.join(self.annotation_dir, filename.replace('.jpg', '.txt'))
         if os.path.exists(annotation_path):
             self.load_annotations(annotation_path)
@@ -175,8 +189,9 @@ class AnnotationApp:
                 kp_y = (kp[1] * self.photo_image.height() + self.offset_y)
                 self.canvas.create_oval(kp_x - 3, kp_y - 3, kp_x + 3, kp_y + 3, fill="blue", tags="annotation")
 
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = AnnotationApp(root)
     root.mainloop()
-
