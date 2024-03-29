@@ -66,8 +66,23 @@ class AnnotationApp:
             [24, 30], [25, 27], [25, 31], [26, 28], [27, 29], [30, 31], [30, 32], [31, 33],
             [32, 34], [33, 35]
         ]
+
+        self.file_listbox.bind('<Double-1>', self.open_annotation_file)
         self.canvas.bind('<Configure>', lambda e: self.update_image_canvas())
         root.geometry(f"{self.canvas_width}x{self.canvas_height}")
+
+    def open_annotation_file(self, event):
+        selection = self.file_listbox.curselection()
+        if selection:
+            index = selection[0]
+            filename = self.image_list[index]
+            annotation_file_path = os.path.join(self.annotation_dir, filename.replace('.jpg', '.txt'))
+
+            if os.path.exists(annotation_file_path):
+                # 根据操作系统打开文件，这里使用的是Windows的方式
+                os.startfile(annotation_file_path)
+            else:
+                messagebox.showinfo("信息", "标注文件不存在")
 
     def load_image_directory(self):
         self.image_dir = filedialog.askdirectory(title="选择图片目录")
@@ -197,7 +212,6 @@ class AnnotationApp:
                     kp1 = transformed_keypoints[edge[0] - 1]
                     kp2 = transformed_keypoints[edge[1] - 1]
                     self.canvas.create_line(kp1[0], kp1[1], kp2[0], kp2[1], fill="green", tags="annotation")
-
 
 
 if __name__ == "__main__":
