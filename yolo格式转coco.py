@@ -78,6 +78,7 @@ for filename in os.listdir(annotation_path):
                     "area": bbox_width_abs * bbox_height_abs,
                     "segmentation": [],
                     "iscrowd": 0,
+                    "isbbox": 1,
                     "keypoints": [],
                     "num_keypoints": 0
                 }

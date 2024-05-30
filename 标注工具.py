@@ -147,10 +147,11 @@ class AnnotationApp:
                 if len(parts) < 5:
                     continue  # 不是有效的标注行
 
+                category = parts[0]
                 bbox = [float(n) for n in parts[1:5]]
                 keypoints = [(float(parts[i]), float(parts[i + 1]))
                              for i in range(5, len(parts), 3)]
-                self.annotation_data.append((bbox, keypoints))
+                self.annotation_data.append((category, bbox, keypoints))
 
         self.draw_annotations()
 
@@ -190,13 +191,15 @@ class AnnotationApp:
             return
 
         self.canvas.delete("annotation")  # 删除旧的注释
-        for bbox, keypoints in self.annotation_data:
+        for category, bbox, keypoints in self.annotation_data:
             # 转换并绘制边界框
             x1, y1 = ((bbox[0] - bbox[2] / 2) * self.photo_image.width() + self.offset_x,
                       (bbox[1] - bbox[3] / 2) * self.photo_image.height() + self.offset_y)
             x2, y2 = ((bbox[0] + bbox[2] / 2) * self.photo_image.width() + self.offset_x,
                       (bbox[1] + bbox[3] / 2) * self.photo_image.height() + self.offset_y)
             self.canvas.create_rectangle(x1, y1, x2, y2, outline="red", tags="annotation")
+
+            self.canvas.create_text(x1, y1, text=category, fill="yellow", anchor="nw", tags="annotation")
 
             # 转换并绘制关键点
             transformed_keypoints = []

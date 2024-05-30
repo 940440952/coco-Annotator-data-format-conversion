@@ -52,8 +52,8 @@ def show_image_and_yolo_annotations(image_dir, annotation_dir, image_id):
     plt.show()
 
 # 输入参数
-image_dir = 'pic'  # 图片所在的文件夹路径
+image_dir = 'D:\SRDatabase\高空作业\3.29 数据+yaml文件\3.29\dataset2\images\train'  # 图片所在的文件夹路径
 annotation_dir = 'merged_dataset'  # 标注所在的文件夹路径
-image_id = '1079'  # 图片的编号，不包含文件扩展名
+image_id = '1144'  # 图片的编号，不包含文件扩展名
 
 show_image_and_yolo_annotations(image_dir, annotation_dir, image_id)

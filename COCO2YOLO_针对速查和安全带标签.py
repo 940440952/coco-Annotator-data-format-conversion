@@ -54,7 +54,7 @@ def convert_coco_to_yolo(json_file_path, output_dir, missing_data_file):
 
 
 # 使用示例
-json_file_path = 'coco-1711334761.5748825.json'  # JSON 文件的路径
+json_file_path = 'coco-1711353971.303344.json'  # JSON 文件的路径
 output_directory = 'safetyBelt'  # 输出目录
 missing_data_file = 'missing_data.txt'  # 缺失数据文件
 
